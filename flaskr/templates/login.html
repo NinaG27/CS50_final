@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Login
+{% endblock %}
+
+{% block content %}
+<p>Welcome back!</p>
+<form id="form-login">
+    <div>
+        <label for="email">Email:</label>
+        <input autocomplete="off" type="text" name="email" placeholder="email">
+        <label for="password">Password:</label>
+        <input autocomplete="off" type="password" name="password" placeholder="*******">
+        <button type="submit">Sign in</button>
+    </div>
+    <div>
+        <span>No account?</span><a href="/register">Registar</a>
+    </div>
+</form>
+{% endblock %}
+
+{% block scripts %}
+<!-- From:  https://flask.palletsprojects.com/en/stable/tutorial/static/ -->
+<script src="{{ url_for('static', filename='login.js') }}"></script>
+{% endblock %}

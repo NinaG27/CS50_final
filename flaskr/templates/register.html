@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Register page
+{% endblock %}
+
+{% block content %}
+<form>
+    <div>
+        <label for="email">Email:</label>
+        <input autocomplete="off" name="email" type="text">
+
+        <label for="password">Password:</label>
+        <input autocomplete="off" name="password" type="password">
+
+        <label for="check">Confirm password</label>
+        <input autocomplete="off" name="confirm" type="password">
+    </div>
+    <button type="submit">Register</button>
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='register.js')}}"></script>
+{% endblock %}
