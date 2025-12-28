@@ -1,4 +1,4 @@
-function login(e) {
+async function login(e) {
     e.preventDefault()
     let form = e.target
     let data = new FormData(form)
@@ -9,9 +9,24 @@ function login(e) {
     if (!email || !password) {
         return alert("Please fill both fields.")
     }
-    console.log(email, password)
 
     // Send to api /login
+    response = await fetch("/login", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email, password })
+    })
+
+    // TODO Clear inputs
+
+    if (!response.ok) {
+        console.log("something went wrong with user auth")
+        // handle user registration error 
+    }
+    console.log("sucessfull login - should redirect")
+    window.location.href = "/"
 }
 
 function addEventListeners() {

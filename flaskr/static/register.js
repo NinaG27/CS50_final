@@ -30,6 +30,8 @@ async function registar(e) {
     if (!response.ok) {
         // handle user registration error 
     }
+
+    // TODO Clear inputs
     console.log(response)
 
 }
