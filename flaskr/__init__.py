@@ -173,8 +173,8 @@ def create_app(test_config=None):
 
         return redirect("/")
         
-    @app.route("/registar", methods=["GET", "POST"])
-    def registar():
+    @app.route("/register", methods=["GET", "POST"])
+    def register():
         """Register user"""
 
         if request.method == "GET":

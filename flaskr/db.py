@@ -59,13 +59,13 @@ def add_user(db, email, password):
     # Hash password 
     password_hash = generate_password_hash(password)
     # INSERT OR IGNORE can silently fail so need to check for changes
-    cursor = db.execute("INSERT OR IGNORE INTO users (email, password_hash) VALUES (?, ?)", (email, password_hash))
+    cursor = db.execute("INSERT OR IGNORE INTO users (email, password_hash) VALUES (?, ?)", [email, password_hash])
 
     return cursor.rowcount == 1
 
 def find_user(email):
 
-    user = query_db("SELECT * FROM users WHERE email = ?", (email), True)
+    user = query_db("SELECT * FROM users WHERE email = ?", [email], True)
 
     return user if user else None
   
@@ -89,12 +89,12 @@ def auth_user(email, password):
 # Save user and assistant messages 
 def save_message(db, user_id, role, message):
     print("Role is:", role)
-    cursor = db.execute("INSERT INTO chat_log (user_id, role, message) VALUES (?, ?, ?)", (user_id, role, message))
+    cursor = db.execute("INSERT INTO chat_log (user_id, role, message) VALUES (?, ?, ?)", [user_id, role, message])
 
     return cursor.rowcount == 1
 
 def get_messages(user_id, limit=20):
-    messages = query_db("SELECT * FROM chat_log WHERE user_id=? ORDER BY created_at DESC LIMIT ?", (user_id, limit))
+    messages = query_db("SELECT * FROM chat_log WHERE user_id=? ORDER BY created_at DESC LIMIT ?", [user_id, limit])
     print(messages[::-1])
 
     # list[start : stop : step]
