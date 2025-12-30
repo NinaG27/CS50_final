@@ -1,10 +1,12 @@
-from flask import Flask, render_template, request, url_for, g, session, redirect
+from flask import Flask, render_template, request, url_for, g, session, redirect, current_app, jsonify
 from flask_session import Session
 import os
+from dotenv import load_dotenv
 
-from flaskr.db import get_db, add_user, auth_user
+from flaskr.db import get_db, add_user, auth_user, save_message, get_messages
 from flaskr.helpers import login_required
 
+from groq import Groq
 
 # from https://flask.palletsprojects.com/en/stable/tutorial/factory/
 def create_app(test_config=None):
@@ -31,6 +33,7 @@ def create_app(test_config=None):
         pass
 
     Session(app)
+    load_dotenv()
 
     # Check if placement good here 
     from . import db
@@ -39,7 +42,6 @@ def create_app(test_config=None):
     ### Template and API routes ###
 
     @app.route("/")
-    @login_required
     def index():
         print(url_for('index'))
         return render_template("index.html")
@@ -80,7 +82,89 @@ def create_app(test_config=None):
            
             # Check what to return (probably redirect to home page?)
             return {"sucess": True}, 200
+
+    @app.route("/assistant")
+    def assistant():
+        user_id = session.get("user_id")
+
+        if not user_id:
+            return "TODO User not logged in"
         
+        messages=get_messages(user_id)
+
+        return render_template("assistant.html", messages=messages)
+
+    
+    @app.route("/api/send_message", methods=["POST"])
+    def send_message():
+        # From https://console.groq.com/docs/quickstart
+        api_key = os.getenv("GROQ_API_KEY")
+        DATABASE = current_app.config["DATABASE"]
+
+        groq_client = Groq(api_key=api_key)
+
+        # TODO Get user id safly? 
+        user_id = session.get("user_id")
+        user_input = request.get_json().get("message")
+
+        db = get_db()
+        # Save user message to db
+        message_id = save_message(db, user_id, "user", user_input)
+        db.commit()
+
+        if not message_id:
+           return "TODO error with wrting message to bd"
+        
+        SYSTEM_PROMPT = """
+                You are a friendly French language learning assistant.
+
+                Rules:
+                - Teach French clearly and simply
+                - Use short explanations
+                - Give examples when helpful
+                - Correct mistakes gently
+                - If the user asks in English, explain in English
+                - If the user asks in French, respond in simple French
+                - Adapt explanations to a beginner level
+                """
+        # Get last 20 messages 
+        history = get_messages(user_id)
+
+        # Create history for prompt 
+        messages=[
+            {
+                "role": "system",
+                "content": SYSTEM_PROMPT,
+            },
+        ]
+        
+        # Add last 20 messages 
+        for message in history:
+            messages.append({         
+                "role": message["role"],
+                "content": message["message"],
+            })
+
+        # Add current user input
+        messages.append({
+            "role": "user",
+            "content": user_input
+        })
+
+        # Prompt groq
+        chat_completion = groq_client.chat.completions.create(
+            messages=messages,
+            model="llama-3.3-70b-versatile",
+        )
+
+        assistant_reply = chat_completion.choices[0].message.content
+
+        # Save assistant reply to db
+        save_message(db, user_id, "assistant", assistant_reply)
+        db.commit()
+
+        return jsonify({"reply" : assistant_reply})
+
     @app.route("/logout")
     def logout():
         """Log user out"""

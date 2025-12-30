@@ -26,7 +26,7 @@ async function login(e) {
         // handle user registration error 
     }
     console.log("sucessfull login - should redirect")
-    window.location.href = "/"
+    window.location.href = "/assistant"
 }
 
 function addEventListeners() {

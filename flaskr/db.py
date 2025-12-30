@@ -65,7 +65,7 @@ def add_user(db, email, password):
 
 def find_user(email):
 
-    user = query_db("SELECT * FROM users WHERE email = ?", [email], True)
+    user = query_db("SELECT * FROM users WHERE email = ?", (email), True)
 
     return user if user else None
   
@@ -86,5 +86,17 @@ def auth_user(email, password):
         print("password or username do not match")
         return "TODO password or username do not match"
 
+# Save user and assistant messages 
+def save_message(db, user_id, role, message):
+    print("Role is:", role)
+    cursor = db.execute("INSERT INTO chat_log (user_id, role, message) VALUES (?, ?, ?)", (user_id, role, message))
 
+    return cursor.rowcount == 1
+
+def get_messages(user_id, limit=20):
+    messages = query_db("SELECT * FROM chat_log WHERE user_id=? ORDER BY created_at DESC LIMIT ?", (user_id, limit))
+    print(messages[::-1])
+
+    # list[start : stop : step]
+    return messages[::-1]
 # Inconsistant returns might need to consolidate later 
