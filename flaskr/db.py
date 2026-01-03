@@ -95,8 +95,6 @@ def save_message(db, user_id, role, message):
 
 def get_messages(user_id, limit=20):
     messages = query_db("SELECT * FROM chat_log WHERE user_id=? ORDER BY created_at DESC LIMIT ?", [user_id, limit])
-    print(messages[::-1])
-
     # list[start : stop : step]
     return messages[::-1]
 # Inconsistant returns might need to consolidate later 

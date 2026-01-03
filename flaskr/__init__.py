@@ -2,6 +2,8 @@ from flask import Flask, render_template, request, url_for, g, session, redirect
 from flask_session import Session
 import os
 from dotenv import load_dotenv
+import datetime
+from collections import defaultdict
 
 from flaskr.db import get_db, add_user, auth_user, save_message, get_messages
 from flaskr.helpers import login_required
@@ -40,7 +42,6 @@ def create_app(test_config=None):
     db.init_app(app)
 
     ### Template and API routes ###
-
     @app.route("/")
     def index():
         print(url_for('index'))
@@ -83,19 +84,20 @@ def create_app(test_config=None):
             # Check what to return (probably redirect to home page?)
             return {"sucess": True}, 200
 
+
+    @app.route("/test")
+    def test():
+        return "OK"
+    
     @app.route("/assistant")
+    @login_required
     def assistant():
-        user_id = session.get("user_id")
 
-        if not user_id:
-            return "TODO User not logged in"
-        
-        messages=get_messages(user_id)
-
-        return render_template("assistant.html", messages=messages)
+        return render_template("assistant.html")
 
     
     @app.route("/api/send_message", methods=["POST"])
+    @login_required
     def send_message():
         # From https://console.groq.com/docs/quickstart
         api_key = os.getenv("GROQ_API_KEY")
@@ -211,6 +213,20 @@ def create_app(test_config=None):
             # Check what to return (probably redirect to home page?)
             return {}, 200
 
+    @app.route("/history")
+    @login_required
+    def chat_history():
+        user_id = session.get("user_id")
+        # formating messages by date 
+        # from https://docs.python.org/3/library/collections.html#defaultdict-examples
+        sorted_messages = defaultdict(list) # Order not guarenteed need to fix later 
+
+        for msg in get_messages(user_id):
+            # https://note.nkmk.me/en/python-datetime-isoformat-fromisoformat/
+            date = datetime.datetime.fromisoformat(msg["created_at"]).date()
+            sorted_messages[date].append(msg)
+
+        return render_template("history.html", messages=sorted_messages)
 
     return app
 

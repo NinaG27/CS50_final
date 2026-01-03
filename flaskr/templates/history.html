@@ -1,26 +1,24 @@
 {% extends "layout.html" %}
 
 {% block title %}
-Assistant page
+Chat History
 {% endblock %}
 
 {% block content %}
-<h1>Assistant page</h1>
+<p>Chat history:</p>
 <div id="chat">
-    {% for msg in messages %}
+    {% for date, msgs in messages.items() %}
+    <h3 class="{{ date }}">{{ date }}</h3>
+    {% for msg in msgs %}
     <div class="{{ msg['role'] }}">
         <strong>{{ msg['role'] }}:</strong>{{ msg['message'] }}
     </div>
     {% endfor %}
+    {% endfor %}
 </div>
-<form>
-    <label for="user_input">Ask anything: </label>
-    <input id="user_input" type="text" name="user_input" autocomplete="off">
-    <button type="submit">Send</button>
-</form>
 {% endblock %}
 
 {% block scripts %}
 <!-- From:  https://flask.palletsprojects.com/en/stable/tutorial/static/ -->
-<script src="{{ url_for('static', filename='assistant.js') }}"></script>
+<script src="{{ url_for('static', filename='history.js') }}"></script>
 {% endblock %}
