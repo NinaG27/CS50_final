@@ -5,19 +5,33 @@ Assistant page
 {% endblock %}
 
 {% block content %}
-<h1>Assistant page</h1>
-<div id="chat">
-    {% for msg in messages %}
-    <div class="{{ msg['role'] }}">
-        <strong>{{ msg['role'] }}:</strong>{{ msg['message'] }}
+<div class="main-content">
+    <div class="inner-window">
+        <div class="header">
+            <h1>◆ FRENCH_ASSISTANT.EXE ◆</h1>
+            <p>Header p</p>
+        </div>
+        <div class="messages-area">
+            {% for msg in messages %}
+            <div class="message {{ msg['role'] }}">
+                <div class="message-timestamp">{{ msg['created_at'] }}</div>
+                <div class="message-content">{{ msg['message'] }}</div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="input-area">
+            <form class="input-container">
+                <input class="input-field" type="text" name="user_input" autocomplete="off" placeholder="Ask anything:">
+                <button class="send-button" type="submit">Send</button>
+            </form>
+            <div class="input-footer">
+                <span>◆ PRESS ENTER TO SEND</span>
+                <span>STATUS: READY</span>
+            </div>
+        </div>
+
     </div>
-    {% endfor %}
 </div>
-<form>
-    <label for="user_input">Ask anything: </label>
-    <input id="user_input" type="text" name="user_input" autocomplete="off">
-    <button type="submit">Send</button>
-</form>
 {% endblock %}
 
 {% block scripts %}

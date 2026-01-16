@@ -1,4 +1,4 @@
-async function registar(e) {
+async function send_message(e) {
     e.preventDefault()
     const form = e.target;
     const form_data = new FormData(form);
@@ -29,9 +29,9 @@ async function registar(e) {
 
     const data = await response.json();
 
-    const chat = document.querySelector("#chat");
-    chat.innerHTML += `<div class="msg user"><strong>You:</strong>${user_input}</div>`;
-    chat.innerHTML += `<div class="msg assistant"><strong>Assistant:</strong>${data.reply}</div>`;
+    const chat = document.querySelector(".messages-area");
+    chat.innerHTML += `<div class="message user"><p class="message-content">${user_input}</p></div>`;
+    chat.innerHTML += `<div class="message assistant"><p class="message-content">${data.reply}</p></div>`;
 
     // TODO Clear inputs
     console.log(response)
@@ -39,7 +39,7 @@ async function registar(e) {
 }
 
 function addEventListeners() {
-    document.addEventListener("submit", registar)
+    document.addEventListener("submit", send_message)
 
 }
 

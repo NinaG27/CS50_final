@@ -92,8 +92,11 @@ def create_app(test_config=None):
     @app.route("/assistant")
     @login_required
     def assistant():
-
-        return render_template("assistant.html")
+        # temp for styling test
+        user_id = session.get("user_id")
+        messages = get_messages(user_id)
+        ######
+        return render_template("assistant.html", messages=messages)
 
     
     @app.route("/api/send_message", methods=["POST"])
@@ -228,6 +231,12 @@ def create_app(test_config=None):
 
         return render_template("history.html", messages=sorted_messages)
 
+    @app.route("/notes")
+    @login_required
+    def notes():
+        
+
+        return render_template("notes.html")
     return app
 
 # https://flask.palletsprojects.com/en/stable/quickstart/#variable-rules - use this for user note edit mode?

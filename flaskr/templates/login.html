@@ -5,8 +5,8 @@ Login
 {% endblock %}
 
 {% block content %}
-<p>Welcome back!</p>
-<form id="form-login">
+<form class="form-register">
+    <h2>Login</h2>
     <div>
         <label for="email">Email:</label>
         <input autocomplete="off" type="text" name="email" placeholder="email">
@@ -14,8 +14,11 @@ Login
         <input autocomplete="off" type="password" name="password" placeholder="*******">
         <button type="submit">Sign in</button>
     </div>
-    <div>
-        <span>No account?</span><a href="/register">Registar</a>
+    <div class="input-area">
+        <div class="input-footer">
+            <span>No account? <a href="/register">REGISTER HERE</a></span>
+
+        </div>
     </div>
 </form>
 {% endblock %}

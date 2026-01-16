@@ -5,17 +5,41 @@ Chat History
 {% endblock %}
 
 {% block content %}
-<p>Chat history:</p>
-<div id="chat">
-    {% for date, msgs in messages.items() %}
-    <h3 class="{{ date }}">{{ date }}</h3>
-    {% for msg in msgs %}
-    <div class="{{ msg['role'] }}">
-        <strong>{{ msg['role'] }}:</strong>{{ msg['message'] }}
+<div class="history-container">
+    <div class="history-window">
+        <!-- Header -->
+        <div class="header">
+            <h1>◆ CHAT_HISTORY.LOG ◆</h1>
+            <p>ARCHIVED CONVERSATIONS</p>
+        </div>
+        <div class="history-list" id="history-list">
+            {% for date, msgs in messages.items() %}
+            {% set cid = "collapse-" ~ loop.index %} <!-- This line added with assistance from chatgpt  -->
+            <div class="history-item">
+                <div class="history-date" data-id="{{ cid }}">
+
+                    <span class="history-date-text">◆ {{ date }}</span>
+                    <!-- <span class="history-count"> no of messages here? MESSAGES</span> -->
+                    <span class="history-arrow history-arrow-{{ cid }}">▼</span>
+                </div>
+                <div class="history-content" id="history-content-{{ cid }}">
+                    {% for msg in msgs %}
+                    <div class="history-message history-message-{{ msg['role'] }}">
+                        <div class="history-message-time">
+                            [{{msg['created_at']}}] {{ msg['role'] }}:
+                        </div>
+                        <div class="history-message-text">
+                            {{ msg['message'] }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
     </div>
-    {% endfor %}
-    {% endfor %}
 </div>
+
 {% endblock %}
 
 {% block scripts %}
