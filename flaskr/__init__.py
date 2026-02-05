@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 import datetime
 from collections import defaultdict
 
-from flaskr.db import get_db, add_user, auth_user, save_message, get_messages
+from flaskr.db import get_db, add_user, auth_user, save_message, get_messages, get_user_notes, save_note, delete_note
 from flaskr.helpers import login_required
 
 from groq import Groq
@@ -77,7 +77,6 @@ def create_app(test_config=None):
                 return "TODO user does not exist"
             
             user_id =  user["id"]
-            print(user_id)
             # Remember which user has logged in
             session["user_id"] = user_id
            
@@ -234,10 +233,61 @@ def create_app(test_config=None):
     @app.route("/notes")
     @login_required
     def notes():
-        
+        user_id = session.get("user_id")
+        date = datetime.datetime.now().date()
 
-        return render_template("notes.html")
+        user_notes = get_user_notes(user_id)
+
+        return render_template("notes.html",user_notes=user_notes, date=date)
+    
+    @app.route("/api/add_note", methods=["POST"])
+    @login_required
+    def add_note():
+        user_id = session.get("user_id")
+
+        user_input = request.get_json().get("note")
+
+        db = get_db()
+        # Save user note to db
+        save_note(db, user_id, user_input)
+        db.commit()
+        
+        print("writing note", user_input)
+
+        return jsonify({"status": "success"})
+    
+    @app.route("/api/delete_note", methods=["POST"])
+    @login_required
+    def remove_note():
+        user_id = session.get("user_id")
+
+        note_id = request.get_json().get("id")
+
+        db = get_db()
+        # Delete note from db
+        delete_note(db, user_id, note_id)
+        db.commit()
+
+        return jsonify({"status": "success"})
+    
+    @app.route("/api/get_notes")
+    @login_required
+    def get_notes():
+        user_id = session.get("user_id")
+
+        user_notes = get_user_notes(user_id)
+         
+        # Formating data from Row format to dict (maybe remove id and user id later?)
+        safe_notes = []
+        for note in user_notes:
+            note_dict = dict(note)
+            safe_notes.append(note_dict)
+
+        return jsonify(safe_notes)
+
     return app
+
+
 
 # https://flask.palletsprojects.com/en/stable/quickstart/#variable-rules - use this for user note edit mode?
 # https://flask.palletsprojects.com/en/stable/quickstart/#http-methods - can separate app.post and app.get requests like so

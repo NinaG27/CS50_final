@@ -5,24 +5,35 @@ Notes
 {% endblock %}
 
 {% block content %}
-<p>Notes:</p>
+<div class="notes-container">
+  <div class="notes-window">
+    <!-- Header -->
+    <div class="header">
+      <h1>◆ NOTES.SYS ◆</h1>
+      <p id="system-date">SYSTEM ONLINE :: {{date}}</p>
+    </div>
 
+    <!-- Add Note Form -->
+    <div class="notes-add-section">
+      <div class="notes-form-container">
+        <textarea id="note-input" placeholder="TYPE YOUR NOTE HERE..." class="note-input" rows="4"></textarea>
+        <button id="add-note-button" class="add-note-button">
+          + ADD NOTE
+        </button>
+      </div>
+    </div>
 
-<p class="d-inline-flex gap-1">
-  <a class="btn btn-primary" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
-    Link with href
-  </a>
-  <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
-    Button with data-bs-target
-  </button>
-</p>
-<div class="collapse" id="collapseExample">
-  <div class="card card-body">
-    Some placeholder content for the collapse component. This panel is hidden by default but revealed when the user activates the relevant trigger.
+    <!-- Notes Grid -->
+    <div class="notes-grid-section">
+      <div class="notes-grid" id="notes-grid"></div>
+
+      <div class="notes-empty" id="notes-empty">
+        <p>◆ NO NOTES FOUND ◆</p>
+        <p class="notes-empty-hint">CREATE YOUR FIRST NOTE ABOVE</p>
+      </div>
+    </div>
   </div>
 </div>
-
-
 {% endblock %}
 
 {% block scripts %}

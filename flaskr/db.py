@@ -88,8 +88,18 @@ def auth_user(email, password):
 
 # Save user and assistant messages 
 def save_message(db, user_id, role, message):
-    print("Role is:", role)
+
     cursor = db.execute("INSERT INTO chat_log (user_id, role, message) VALUES (?, ?, ?)", [user_id, role, message])
+
+    return cursor.rowcount == 1
+
+def save_note(db, user_id, note):
+    cursor = db.execute("INSERT INTO user_notes (user_id, note) VALUES (?, ?)", [user_id, note])
+
+    return cursor.rowcount == 1
+
+def delete_note(db, user_id, id):
+    cursor = db.execute("DELETE FROM user_notes WHERE user_id=? AND id=?", [user_id, id])
 
     return cursor.rowcount == 1
 
@@ -98,3 +108,12 @@ def get_messages(user_id, limit=20):
     # list[start : stop : step]
     return messages[::-1]
 # Inconsistant returns might need to consolidate later 
+
+def get_user_notes(user_id):
+    notes = query_db("SELECT * FROM user_notes WHERE user_id=? ORDER BY created_at DESC", [user_id])
+    
+    # Add error checking here later 
+    # Example:  if notes is None:
+    #     raise Exception("Database error fetching notes")
+
+    return notes[::-1] or [] # Add this patern to other methods? 
