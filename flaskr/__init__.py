@@ -236,8 +236,10 @@ def create_app(test_config=None):
     def notes():
         user_id = session.get("user_id")
         date = datetime.datetime.now().date()
-
-        user_notes = get_user_notes(user_id)
+        try:
+            user_notes = get_user_notes(user_id)
+        except: 
+            return render_template("404.html")
 
         return render_template("notes.html",user_notes=user_notes, date=date)
     
@@ -245,7 +247,10 @@ def create_app(test_config=None):
     @login_required
     def load_note(note_id):
         user_id = session.get("user_id")
-        note = get_note(user_id, note_id)
+        try:
+            note = get_note(user_id, note_id)
+        except:
+            return render_template("404.html")
         
         return render_template("note.html", note=note)
     

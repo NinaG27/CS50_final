@@ -117,9 +117,8 @@ def get_messages(user_id, limit=20):
 def get_user_notes(user_id):
     notes = query_db("SELECT * FROM user_notes WHERE user_id=? ORDER BY created_at DESC", [user_id])
     
-    # Add error checking here later 
-    # Example:  if notes is None:
-    #     raise Exception("Database error fetching notes")
+    if notes is None:
+        raise Exception("Database error fetching notes")
 
     return notes[::-1] or [] # Add this patern to other methods? 
 
@@ -127,8 +126,7 @@ def get_user_notes(user_id):
 def get_note(user_id, id):
     note = query_db("SELECT * FROM user_notes WHERE user_id=? AND id=?", [user_id, id])
     
-    # Add error checking here later 
-    # Example:  if notes is None:
-    #     raise Exception("Database error fetching notes")
+    if note is None:
+        raise Exception("Database error fetching note")
 
     return note[0]
