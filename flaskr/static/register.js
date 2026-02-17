@@ -18,7 +18,7 @@ async function registar(e) {
     console.log({ email, password, password_confirm })
 
     // Send to api /registar
-    const response = await fetch("/registar", {
+    const response = await fetch("/register", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

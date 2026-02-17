@@ -103,6 +103,11 @@ def delete_note(db, user_id, id):
 
     return cursor.rowcount == 1
 
+def update_user_note(db, user_id, id, new_note):
+    cursor = db.execute("UPDATE user_notes SET note=? WHERE user_id=? AND id=?", [new_note, user_id, id])
+
+    return cursor.rowcount == 1
+
 def get_messages(user_id, limit=20):
     messages = query_db("SELECT * FROM chat_log WHERE user_id=? ORDER BY created_at DESC LIMIT ?", [user_id, limit])
     # list[start : stop : step]
@@ -117,3 +122,13 @@ def get_user_notes(user_id):
     #     raise Exception("Database error fetching notes")
 
     return notes[::-1] or [] # Add this patern to other methods? 
+
+
+def get_note(user_id, id):
+    note = query_db("SELECT * FROM user_notes WHERE user_id=? AND id=?", [user_id, id])
+    
+    # Add error checking here later 
+    # Example:  if notes is None:
+    #     raise Exception("Database error fetching notes")
+
+    return note[0]

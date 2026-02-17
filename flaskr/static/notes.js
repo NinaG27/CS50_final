@@ -4,13 +4,13 @@ async function renderNotes() {
     const notesEmpty = document.getElementById('notes-empty');
 
     // Fetch all notes for the user
-    const response = await fetch("/api/get_notes")
+    const response = await fetch('/api/get_notes');
 
     if (!response.ok) {
-        return "Something went wrong"
+        return 'Something went wrong';
     }
 
-    const notes = await response.json()
+    const notes = await response.json();
 
     if (notes.length === 0) {
         notesGrid.style.display = 'none';
@@ -23,19 +23,19 @@ async function renderNotes() {
 
     notesGrid.innerHTML = notes
         .map(
-            (note) => `
-        <div class="note-card">
+            note => `
+        <div class="note-card" data-id="${note['id']}">
           <div class="note-header">
-            <div class="note-date">${note["created_at"]}</div>
-            <button class="note-delete" data-id="${note["id"]}">DEL</button>
+            <div class="note-date">${note['created_at']}</div>
+            <button class="note-delete">Edit</button>
           </div>
-          <div class="note-content">${note["note"]}</div>
+          <div class="note-content">${note['note']}</div>
         </div>
-    `
+    `,
         )
         .join('');
 
-    addEventListeners()
+    addEventListeners();
 }
 
 // Add a new note
@@ -48,68 +48,54 @@ async function addNote() {
     }
 
     try {
-        response = await fetch("/api/add_note", {
-            method: "POST",
+        response = await fetch('/api/notes', {
+            method: 'POST',
             headers: {
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ note })
-        })
+            body: JSON.stringify({ note }),
+        });
 
         if (!response.ok) {
-            console.log("somthing went wrong with adding of the note")
+            console.log('somthing went wrong with adding of the note');
         }
         // Clear input
         noteInput.value = '';
         noteInput.focus();
         // Handle UI update - rerender all notes
-        renderNotes()
-
+        renderNotes();
     } catch {
-        print("TODO")
+        print('TODO');
     }
 }
 
 // Delete a note
-async function deleteNote(el) {
+async function redirect(el) {
     id = el.dataset.id;
 
-    try {
-        response = await fetch("/api/delete_note", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ id })
-        })
-
-        if (!response.ok) {
-            console.log("Error deleting note")
-        }
-
-        // Handle UI update 
-        renderNotes()
-
-    } catch {
-        console.log("TODO Error deleting note")
-    }
+    window.location.replace(`/note/${id}`);
 }
 
 function addEventListeners() {
-    const addNoteBtn = document.querySelector("#add-note-button")
-    const delNoteBtns = document.querySelectorAll(".note-delete")
+    const addNoteBtn = document.querySelector('#add-note-button');
+    const cardDivs = document.querySelectorAll('.note-card');
 
-    if (addNoteBtn) addNoteBtn.addEventListener("click", addNote)
+    if (addNoteBtn) addNoteBtn.addEventListener('click', addNote);
 
-    if (delNoteBtns) {
-        delNoteBtns.forEach(btn => btn.addEventListener("click", function () {
-            deleteNote(this)
-        }))
+    // Event delegation
+    if (cardDivs) {
+        cardDivs.forEach(card =>
+            card.addEventListener('click', function (ev) {
+                if (ev.target.tagName === 'BUTTON') {
+                    redirect(this);
+                }
+            }),
+        );
     }
 }
 
 function init() {
-    renderNotes()
+    renderNotes();
 }
 
-document.addEventListener("DOMContentLoaded", init)
+document.addEventListener('DOMContentLoaded', init);

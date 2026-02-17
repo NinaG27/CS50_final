@@ -9,7 +9,7 @@ Assistant page
     <div class="inner-window">
         <div class="header">
             <h1>◆ FRENCH_ASSISTANT.EXE ◆</h1>
-            <p>Header p</p>
+            <p>SYSTEM ONLINE :: {{date}}</p>
         </div>
         <div class="messages-area">
             {% for msg in messages %}
@@ -22,15 +22,15 @@ Assistant page
         <div class="input-area">
             <form class="input-container">
                 <input class="input-field" type="text" name="user_input" autocomplete="off" placeholder="Ask anything:">
-                <button class="send-button" type="submit">Send</button>
+                <button class="mybtn" type="submit">Send</button>
             </form>
             <div class="input-footer">
                 <span>◆ PRESS ENTER TO SEND</span>
                 <span>STATUS: READY</span>
             </div>
         </div>
-
     </div>
+
 </div>
 {% endblock %}
 

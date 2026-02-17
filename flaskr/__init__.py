@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 import datetime
 from collections import defaultdict
 
-from flaskr.db import get_db, add_user, auth_user, save_message, get_messages, get_user_notes, save_note, delete_note
+from flaskr.db import get_db, add_user, auth_user, save_message, get_messages, get_user_notes, save_note, delete_note, get_note, update_user_note
 from flaskr.helpers import login_required
 
 from groq import Groq
@@ -91,11 +91,12 @@ def create_app(test_config=None):
     @app.route("/assistant")
     @login_required
     def assistant():
+        date = datetime.datetime.now().date()
         # temp for styling test
         user_id = session.get("user_id")
         messages = get_messages(user_id)
         ######
-        return render_template("assistant.html", messages=messages)
+        return render_template("assistant.html", messages=messages, date=date)
 
     
     @app.route("/api/send_message", methods=["POST"])
@@ -240,7 +241,15 @@ def create_app(test_config=None):
 
         return render_template("notes.html",user_notes=user_notes, date=date)
     
-    @app.route("/api/add_note", methods=["POST"])
+    @app.route("/note/<int:note_id>")
+    @login_required
+    def load_note(note_id):
+        user_id = session.get("user_id")
+        note = get_note(user_id, note_id)
+        
+        return render_template("note.html", note=note)
+    
+    @app.route("/api/notes", methods=["POST"])
     @login_required
     def add_note():
         user_id = session.get("user_id")
@@ -256,19 +265,30 @@ def create_app(test_config=None):
 
         return jsonify({"status": "success"})
     
-    @app.route("/api/delete_note", methods=["POST"])
+    @app.route("/api/notes/<int:note_id>", methods=["DELETE"])
     @login_required
-    def remove_note():
+    def delete_note_api(note_id):
         user_id = session.get("user_id")
-
-        note_id = request.get_json().get("id")
 
         db = get_db()
         # Delete note from db
         delete_note(db, user_id, note_id)
         db.commit()
 
-        return jsonify({"status": "success"})
+        return jsonify({"status": "deleted"})
+    
+    @app.route("/api/notes/<int:note_id>", methods=["PATCH"])
+    @login_required
+    def update_note_api(note_id):
+        user_id = session.get("user_id")
+        new_note = request.get_json().get("note")
+
+        db = get_db()
+        # Edit note in db
+        update_user_note(db, user_id, note_id, new_note)
+        db.commit()
+
+        return jsonify({"status": "deleted"})
     
     @app.route("/api/get_notes")
     @login_required
@@ -277,10 +297,11 @@ def create_app(test_config=None):
 
         user_notes = get_user_notes(user_id)
          
-        # Formating data from Row format to dict (maybe remove id and user id later?)
+        # Formating data from Row format to dict (maybe remove id and user id later?) TODO - mybe dont need to format
         safe_notes = []
         for note in user_notes:
             note_dict = dict(note)
+            note_dict["created_at"] = datetime.datetime.fromisoformat(note_dict["created_at"]).strftime("%d/%m/%Y")
             safe_notes.append(note_dict)
 
         return jsonify(safe_notes)

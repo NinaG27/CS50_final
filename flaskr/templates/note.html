@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Note page
+{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <div class="inner-window">
+        <div class="header">
+            <h1>◆ NOTE_EDITOR.TXT ◆</h1>
+            <p>NOTE DATE :: {{note['created_at']}}</p>
+        </div>
+        <div class="messages-area">
+            <div class="input-container note">
+                <textarea class="note-edit">{{ note['note'] }}</textarea>
+                <div class="note-buttons" data-id="{{ note['id'] }}">
+                    <button class="mybtn mybtn--back" type="button">[ ◁ Back ]</button>
+                    <button class="mybtn mybtn--save" type="button">[ Save ]</button>
+                    <button class="mybtn mybtn--delete" type="button">[ Delete ]</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="save-toast" class="toast align-items-center" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                Note saved
+            </div>
+            <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<!-- From:  https://flask.palletsprojects.com/en/stable/tutorial/static/ -->
+<script src="{{ url_for('static', filename='note.js') }}"></script>
+{% endblock %}
