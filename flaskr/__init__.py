@@ -14,6 +14,8 @@ from groq import Groq
 def create_app(test_config=None):
     # Create and configure the app
     app = Flask(__name__, instance_relative_config=True)
+
+    # Configuration
     app.config.from_mapping(
         SECRET_KEY='dev',
         DATABASE=os.path.join(app.instance_path, 'database.db'),
@@ -37,66 +39,18 @@ def create_app(test_config=None):
     Session(app)
     load_dotenv()
 
-    # Check if placement good here 
+    # Initialize extensions with app
     from . import db
     db.init_app(app)
 
-    ### Template and API routes ###
-    @app.route("/")
-    def index():
-        print(url_for('index'))
-        return render_template("index.html")
+    # From https://www.digitalocean.com/community/tutorials/how-to-add-authentication-to-your-app-with-flask-login
+    # Registar blueprints 
+    from .auth import auth as auth_blueprint
+    app.register_blueprint(auth_blueprint)
 
-    @app.route("/login", methods=["GET", "POST"])
-    def login():
-        """Log user in"""
+    from .main import main as main_blueprint
+    app.register_blueprint(main_blueprint)
 
-        # Forget any user_id
-        session.clear()
-    
-        if request.method == "GET":
-            return render_template("login.html")
-        
-        if request.method == "POST":
-
-            #Add try catch block 
-            data = request.get_json()
-
-            email = data.get("email")
-            password = data.get("password")
-
-            if not email or not password:
-                print("need to fill all fields")
-                return "TODO handle error"
-              
-            # Authenticate user 
-            user = auth_user(email, password)
-            
-            if not user: 
-                print("user does not exist")
-                return "TODO user does not exist"
-            
-            user_id =  user["id"]
-            # Remember which user has logged in
-            session["user_id"] = user_id
-           
-            # Check what to return (probably redirect to home page?)
-            return {"sucess": True}, 200
-
-
-    @app.route("/test")
-    def test():
-        return "OK"
-    
-    @app.route("/assistant")
-    @login_required
-    def assistant():
-        date = datetime.datetime.now().date()
-        # temp for styling test
-        user_id = session.get("user_id")
-        messages = get_messages(user_id)
-        ######
-        return render_template("assistant.html", messages=messages, date=date)
 
     
     @app.route("/api/send_message", methods=["POST"])
@@ -169,90 +123,6 @@ def create_app(test_config=None):
         db.commit()
 
         return jsonify({"reply" : assistant_reply})
-
-    @app.route("/logout")
-    def logout():
-        """Log user out"""
-
-        session.clear()
-
-        return redirect("/")
-        
-    @app.route("/register", methods=["GET", "POST"])
-    def register():
-        """Register user"""
-
-        if request.method == "GET":
-            return render_template("register.html")
-        
-        if request.method == "POST":
-
-            #Add try catch block 
-            data = request.get_json()
-
-            email = data.get("email")
-            password = data.get("password")
-            password_confirm = data.get("password_confirm")
-
-            if not email or not password or not password_confirm:
-                print("need to fill all fields")
-                return "TODO handle error"
-            
-            if password != password_confirm:
-                print("pasword mismatch")
-                return "TODO handle error"
-            
-            # TODO Check if email in proper email format (maybe in js?)
-            
-            # Add user to db
-            db = get_db()
-            user_id =  add_user(db, email, password)
-            db.commit()
-            # Check if user allready exists 
-            if not user_id:
-                print("user exists")
-                return "TODO users exists ask to login"
-           
-            # Check what to return (probably redirect to home page?)
-            return {}, 200
-
-    @app.route("/history")
-    @login_required
-    def chat_history():
-        user_id = session.get("user_id")
-        # formating messages by date 
-        # from https://docs.python.org/3/library/collections.html#defaultdict-examples
-        sorted_messages = defaultdict(list) # Order not guarenteed need to fix later 
-
-        for msg in get_messages(user_id):
-            # https://note.nkmk.me/en/python-datetime-isoformat-fromisoformat/
-            date = datetime.datetime.fromisoformat(msg["created_at"]).date()
-            sorted_messages[date].append(msg)
-
-        return render_template("history.html", messages=sorted_messages)
-
-    @app.route("/notes")
-    @login_required
-    def notes():
-        user_id = session.get("user_id")
-        date = datetime.datetime.now().date()
-        try:
-            user_notes = get_user_notes(user_id)
-        except: 
-            return render_template("404.html")
-
-        return render_template("notes.html",user_notes=user_notes, date=date)
-    
-    @app.route("/note/<int:note_id>")
-    @login_required
-    def load_note(note_id):
-        user_id = session.get("user_id")
-        try:
-            note = get_note(user_id, note_id)
-        except:
-            return render_template("404.html")
-        
-        return render_template("note.html", note=note)
     
     @app.route("/api/notes", methods=["POST"])
     @login_required
@@ -312,8 +182,3 @@ def create_app(test_config=None):
         return jsonify(safe_notes)
 
     return app
-
-
-
-# https://flask.palletsprojects.com/en/stable/quickstart/#variable-rules - use this for user note edit mode?
-# https://flask.palletsprojects.com/en/stable/quickstart/#http-methods - can separate app.post and app.get requests like so

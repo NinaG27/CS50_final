@@ -56,10 +56,7 @@ def execute_db(query, args=()):
     
 
 def add_user(db, email, password):
-    # Hash password 
-    password_hash = generate_password_hash(password)
-    # INSERT OR IGNORE can silently fail so need to check for changes
-    cursor = db.execute("INSERT OR IGNORE INTO users (email, password_hash) VALUES (?, ?)", [email, password_hash])
+    cursor = db.execute("INSERT OR IGNORE INTO users (email, password_hash) VALUES (?, ?)", [email, password])
 
     return cursor.rowcount == 1
 

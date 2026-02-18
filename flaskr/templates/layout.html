@@ -33,17 +33,20 @@ get_flashed_messages() functions. -->
             <div class="collapse navbar-collapse" id="navbar">
                 {% if session["user_id"] %}
                 <ul class="navbar-nav me-auto mt-2">
-                    <li class="nav-item"><a class="nav-link" href="/assistant">Assistant ✧˖°</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/notes">My notes ✎.✧˖°</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/history">Chat History 📓.✧˖°</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('main.assistant') }}">Assistant ✧˖°</a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('main.notes') }}">My notes ✎.✧˖°</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('main.chat_history') }}">Chat History
+                            📓.✧˖°</a></li>
                 </ul>
                 <ul class="navbar-nav ms-auto mt-2">
-                    <li class="nav-item"><a class="nav-link" href="/logout">✧ Log Out ✧</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.logout') }}">✧ Log Out ✧</a></li>
                 </ul>
                 {% else %}
                 <ul class="navbar-nav ms-auto mt-2">
-                    <li class="nav-item"><a class="nav-link" href="/register">Register ✎.✧˖°</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/login">✧ Log In ✧</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.register') }}">Register ✎.✧˖°</a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.login') }}">✧ Log In ✧</a></li>
                 </ul>
                 {% endif %}
             </div>
