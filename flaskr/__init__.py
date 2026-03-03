@@ -1,26 +1,29 @@
-from flask import Flask, render_template, request, url_for, g, session, redirect, current_app, jsonify
-from flask_session import Session
+from flask import Flask, current_app, jsonify, session
+from flask_sqlalchemy import SQLAlchemy
 import os
 from dotenv import load_dotenv
 import datetime
-from collections import defaultdict
-
-from flaskr.db import get_db, add_user, auth_user, save_message, get_messages, get_user_notes, save_note, delete_note, get_note, update_user_note
+from flaskr.db import save_message, get_messages, get_user_notes, save_note, delete_note, update_user_note
 from flaskr.helpers import login_required
-
 from groq import Groq
+
+# Initialize SQLAlchemy instance 
+db = SQLAlchemy()
 
 # from https://flask.palletsprojects.com/en/stable/tutorial/factory/
 def create_app(test_config=None):
     # Create and configure the app
     app = Flask(__name__, instance_relative_config=True)
 
+    # TODO figure out how sensitive keys need to be added 
+    load_dotenv()
+
     # Configuration
     app.config.from_mapping(
         SECRET_KEY='dev',
-        DATABASE=os.path.join(app.instance_path, 'database.db'),
-        SESSION_PERMANENT = False,
-        SESSION_TYPE = "filesystem"
+        SQLALCHEMY_DATABASE_URI = 'sqlite:///db.sqlite',
+        SQLALCHEMY_TRACK_MODIFICATIONS = False,
+        GROQ_API_KEY=os.getenv("GROQ_API_KEY")
     )
 
     if test_config is None:
@@ -36,12 +39,13 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    Session(app)
-    load_dotenv()
-
     # Initialize extensions with app
-    from . import db
     db.init_app(app)
+
+    from . import models
+
+    with app.app_context():
+        db.create_all()  
 
     # From https://www.digitalocean.com/community/tutorials/how-to-add-authentication-to-your-app-with-flask-login
     # Registar blueprints 
@@ -50,14 +54,12 @@ def create_app(test_config=None):
 
     from .main import main as main_blueprint
     app.register_blueprint(main_blueprint)
-
-
     
     @app.route("/api/send_message", methods=["POST"])
     @login_required
     def send_message():
         # From https://console.groq.com/docs/quickstart
-        api_key = os.getenv("GROQ_API_KEY")
+        api_key = current_app.config("GROQ_API_KEY")
         DATABASE = current_app.config["DATABASE"]
 
         groq_client = Groq(api_key=api_key)
@@ -72,7 +74,7 @@ def create_app(test_config=None):
         db.commit()
 
         if not message_id:
-           return "TODO error with wrting message to bd"
+           return "TODO error with writing message to bd"
         
         SYSTEM_PROMPT = """
                 You are a friendly French language learning assistant.

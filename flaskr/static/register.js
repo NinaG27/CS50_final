@@ -1,49 +1,52 @@
-async function registar(e) {
-    e.preventDefault()
-    let form = e.target
-    let data = new FormData(form)
+import { showError, clearError } from './helpers.js';
 
-    let email = data.get("email")
-    let password = data.get("password")
-    let password_confirm = data.get("confirm")
+async function register(e) {
+    e.preventDefault();
 
-    // TODO - add better validation 
+    const errorEl = document.querySelector('.error');
+    clearError(errorEl);
+
+    const form = e.target;
+    const formData = new FormData(form);
+
+    const email = formData.get('email').toLowerCase();
+    const password = formData.get('password');
+    const password_confirm = formData.get('confirm');
+
     if (!email || !password || !password_confirm) {
-        return alert("Please fill all fields.")
+        showError('All fields are required', errorEl);
+        return;
     }
 
     if (password !== password_confirm) {
-        return alert("Passwords do not match.")
+        showError('Password mismatch', errorEl);
+        return;
     }
-    console.log({ email, password, password_confirm })
 
-    // Send to api /registar
-    const response = await fetch("/register", {
-        method: "POST",
+    const response = await fetch('/api/register', {
+        method: 'POST',
         headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password, password_confirm }
-        )
-    })
+        body: JSON.stringify({ email, password, password_confirm }),
+    });
+
+    const data = await response.json();
 
     if (!response.ok) {
-        // handle user registration error 
+        showError(data.error || 'Something went wrong', errorEl);
+        return;
     }
 
-    // TODO Clear inputs
-    console.log(response)
-
+    window.location.replace('/login');
 }
 
 function addEventListeners() {
-    document.addEventListener("submit", registar)
-
+    document.addEventListener('submit', register);
 }
 
 function init() {
-    addEventListeners()
-
+    addEventListeners();
 }
 
-document.addEventListener("DOMContentLoaded", init)
+document.addEventListener('DOMContentLoaded', init);

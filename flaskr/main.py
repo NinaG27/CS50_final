@@ -1,12 +1,11 @@
 from flask import Blueprint, Flask, render_template, request, url_for, g, session, redirect, current_app, jsonify
-from flask_login import login_required, current_user
-from flask_session import Session
+from flask_login import login_required
 import os
 from dotenv import load_dotenv
 import datetime
 from collections import defaultdict
 
-from flaskr.db import get_db, add_user, auth_user, save_message, get_messages, get_user_notes, save_note, delete_note, get_note, update_user_note
+from flaskr.db import add_user, auth_user, save_message, get_messages, get_user_notes, save_note, delete_note, get_note, update_user_note
 from flaskr.helpers import login_required
 
 from groq import Groq
@@ -33,7 +32,7 @@ def chat_history():
     user_id = session.get("user_id")
     # formating messages by date 
     # from https://docs.python.org/3/library/collections.html#defaultdict-examples
-    sorted_messages = defaultdict(list) # Order not guarenteed need to fix later 
+    sorted_messages = defaultdict(list) # Order not guaranteed need to fix later 
 
     for msg in get_messages(user_id):
         # https://note.nkmk.me/en/python-datetime-isoformat-fromisoformat/

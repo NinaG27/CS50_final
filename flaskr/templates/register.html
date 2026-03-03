@@ -7,47 +7,21 @@ Register page
 {% block content %}
 <form class="form-register">
     <h2>Register</h2>
+    <p class="error" style="color: red;" hidden></p>
     <div>
         <label for="email">Email:</label>
-        <input autocomplete="off" name="email" type="text">
+        <input autocomplete="off" name="email" type="email" placeholder="email">
 
         <label for="password">Password:</label>
-        <input autocomplete="off" name="password" type="password">
+        <input autocomplete="off" name="password" type="password" placeholder="password">
 
-        <label for="check">Confirm password</label>
-        <input autocomplete="off" name="confirm" type="password">
+        <label for="check">Confirm password:</label>
+        <input autocomplete="off" name="confirm" type="password" placeholder="repeat password">
     </div>
     <button type="submit">Register</button>
-
-    <pre class="ascii-art">
-           .--.                   .---.
-       .---|__|           .-.     |~~~|
-    .--|===|--|_          |_|     |~~~|--.
-    |  |===|  |'\     .---!~|  .--|   |--|
-    |%%|   |  |.'\    |===| |--|%%|   |  |
-    |%%|   |  |\.'\   |   | |__|  |   |  |
-    |  |   |  | \  \  |===| |==|  |   |  |
-    |  |   |__|  \.'\ |   |_|__|  |~~~|__|
-    |  |===|--|   \.'\|===|~|--|%%|~~~|--|
-    ^--^---'--^    `-'`---^-^--^--^---'--' 
-    </pre>
-    <pre class="header ascii-art">
-            _________________________________________________________
-            ||-------------------------------------------------------||
-            ||.--.    .-._                        .----.             ||
-            |||==|____| |H|___            .---.___|""""|_____.--.___ ||
-            |||  |====| | |xxx|_          |+++|=-=|_  _|-=+=-|==|---|||
-            |||==|    | | |   | \         |   |   |_\/_|Black|  | ^ |||
-            |||  |    | | |   |\ \   .--. |   |=-=|_/\_|-=+=-|  | ^ |||
-            |||  |    | | |   |_\ \_( oo )|   |   |    |Magus|  | ^ |||
-            |||==|====| |H|xxx|  \ \ |''| |+++|=-=|""""|-=+=-|==|---|||
-            ||`--^----'-^-^---'   `-' ""  '---^---^----^-----^--^---^||
-            ||_______________________________________________________||
-            
-     </pre>
 </form>
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ url_for('static', filename='register.js')}}"></script>
+<script type="module" src="{{ url_for('static', filename='register.js')}}"></script>
 {% endblock %}
