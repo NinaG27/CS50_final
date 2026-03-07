@@ -5,8 +5,9 @@ Login
 {% endblock %}
 
 {% block content %}
-<form class="form-register">
+<form class="form-register" method="post">
     <h2>Login</h2>
+    <p class="error" style="color: red;" hidden></p>
     <div>
         <label for="email">Email:</label>
         <input autocomplete="off" type="text" name="email" placeholder="email">
@@ -17,13 +18,11 @@ Login
     <div class="input-area">
         <div class="input-footer">
             <span>No account? <a href="/register">REGISTER HERE</a></span>
-
         </div>
     </div>
 </form>
 {% endblock %}
 
 {% block scripts %}
-<!-- From:  https://flask.palletsprojects.com/en/stable/tutorial/static/ -->
-<script src="{{ url_for('static', filename='login.js') }}"></script>
+<script type="module" src="{{ url_for('static', filename='login.js') }}"></script>
 {% endblock %}

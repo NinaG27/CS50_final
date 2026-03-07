@@ -1,42 +1,44 @@
+import { showError, clearError } from './helpers.js';
+
 async function login(e) {
-    e.preventDefault()
-    let form = e.target
-    let data = new FormData(form)
-    let email = data.get("email")
-    let password = data.get("password")
+    e.preventDefault();
 
-    // TODO - add better validation 
+    const errorEl = document.querySelector('.error');
+    clearError(errorEl);
+
+    let form = e.target;
+    let formData = new FormData(form);
+
+    let email = formData.get('email').toLowerCase();
+    let password = formData.get('password');
+
     if (!email || !password) {
-        return alert("Please fill both fields.")
+        showError('All fields are required', errorEl);
+        return;
     }
+    console.log('here');
 
-    // Send to api /login
-    response = await fetch("/login", {
-        method: "POST",
+    const response = await fetch('/api/login', {
+        method: 'POST',
         headers: {
-            "Content-Type": "application/json"
+            'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password })
-    })
+        body: JSON.stringify({ email, password }),
+    });
 
-    // TODO Clear inputs
+    const data = await response.json();
 
     if (!response.ok) {
-        console.log("something went wrong with user auth")
-        // handle user registration error 
+        showError(data.error || 'Something went wrong', errorEl);
+        return;
     }
-    console.log("sucessfull login - should redirect")
-    window.location.href = "/assistant"
-}
 
-function addEventListeners() {
-    document.addEventListener("submit", login)
-
+    window.location.replace('/assistant');
 }
 
 function init() {
-    addEventListeners()
-
+    const form = document.querySelector('.form-register');
+    form.addEventListener('submit', login);
 }
 
-document.addEventListener("DOMContentLoaded", init)
+document.addEventListener('DOMContentLoaded', init);

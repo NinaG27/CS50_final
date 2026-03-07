@@ -41,12 +41,9 @@ async function register(e) {
     window.location.replace('/login');
 }
 
-function addEventListeners() {
-    document.addEventListener('submit', register);
-}
-
 function init() {
-    addEventListeners();
+    const form = document.querySelector('.form-register');
+    form.addEventListener('submit', register);
 }
 
 document.addEventListener('DOMContentLoaded', init);
