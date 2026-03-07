@@ -23,7 +23,7 @@ class ChatLog(db.Model):
 
     role = db.Column(db.String, nullable=False)
 
-    created_at = db.Column(db.DateTime, default = datetime.now())
+    created_at = db.Column(db.DateTime, default = datetime.now)
 
     # name optional but saves debugging time later
     # it replaces naming a constraint in sql - CONSTRAINT check_role_valid CHECK (role IN ('assistant', 'user'))

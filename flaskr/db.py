@@ -2,7 +2,7 @@ import sqlite3
 from datetime import datetime
 from werkzeug.security import check_password_hash, generate_password_hash
 from . import db
-import click
+from .models import ChatLog
 from flask import current_app, g
 
 sqlite3.register_converter(
@@ -74,9 +74,9 @@ def update_user_note(db, user_id, id, new_note):
 
 def get_messages(user_id, limit=20):
     messages = query_db("SELECT * FROM chat_log WHERE user_id=? ORDER BY created_at DESC LIMIT ?", [user_id, limit])
+ 
     # list[start : stop : step]
     return messages[::-1]
-# Inconsistent returns might need to consolidate later 
 
 def get_user_notes(user_id):
     notes = query_db("SELECT * FROM user_notes WHERE user_id=? ORDER BY created_at DESC", [user_id])
