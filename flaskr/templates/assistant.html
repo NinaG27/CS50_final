@@ -9,13 +9,13 @@ Assistant page
     <div class="inner-window">
         <div class="header">
             <h1>◆ FRENCH_ASSISTANT.EXE ◆</h1>
-            <p>SYSTEM ONLINE :: {{date}}</p>
+            <p>SYSTEM ONLINE :: {{ date.strftime('%a %-d %b') }}</p>
         </div>
         <div class="messages-area">
             {% for msg in messages %}
             <div class="message {{ msg['role'] }}">
-                <div class="message-timestamp">{{ msg['created_at'] }}</div>
-                <div class="message-content">{{ msg['message'] }}</div>
+                <div class="message-timestamp">{{ msg.created_at.strftime('%H:%M:%S %p') }}</div>
+                <div class="message-content">{{ msg.message }}</div>
             </div>
             {% endfor %}
         </div>
@@ -36,5 +36,5 @@ Assistant page
 
 {% block scripts %}
 <!-- From:  https://flask.palletsprojects.com/en/stable/tutorial/static/ -->
-<script src="{{ url_for('static', filename='assistant.js') }}"></script>
+<script type="module" src="{{ url_for('static', filename='assistant.js') }}"></script>
 {% endblock %}

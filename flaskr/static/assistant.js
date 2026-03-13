@@ -1,51 +1,63 @@
+import { showError, clearError } from './helpers.js';
+
 async function send_message(e) {
-    e.preventDefault()
+    e.preventDefault();
+
+    const errorEl = document.querySelector('.error');
+    clearError(errorEl);
+
     const form = e.target;
-    const form_data = new FormData(form);
+    const formData = new FormData(form);
 
-    const user_input = form_data.get("user_input");
+    const userInput = formData.get('user_input');
 
-    // TODO - add better validation 
-    if (!user_input) {
-        return alert("TODO check for empty input")
-    };
+    if (!userInput) {
+        return;
+    }
 
-    // Clear user input 
+    // Clear user input
     form.reset();
 
-    // Send to api /registar
-    const response = await fetch("/api/send_message", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ message: user_input }
-        )
-    });
+    // Update UI with user message
+    const chat = document.querySelector('.messages-area');
+    const time = new Date().toLocaleTimeString();
+    chat.innerHTML += `
+        <div class="message user">
+            <div class="message-timestamp">${time}</div>
+            <div class="message user"><p class="message-content">${userInput}</p></div>
+        </div>
+    `;
 
-    if (!response.ok) {
-        // handle user registration error 
-    };
+    const response = await fetch('/api/send_message', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: userInput }),
+    });
 
     const data = await response.json();
 
-    const chat = document.querySelector(".messages-area");
-    chat.innerHTML += `<div class="message user"><p class="message-content">${user_input}</p></div>`;
-    chat.innerHTML += `<div class="message assistant"><p class="message-content">${data.reply}</p></div>`;
+    if (!response.ok) {
+        showError(data.error || 'Something went wrong', errorEl);
+    }
 
-    // TODO Clear inputs
-    console.log(response)
+    // Update UI with assistant message
+    const formattedTime = new Date(
+        data.assistant_message.created_at,
+    ).toLocaleTimeString();
 
-}
-
-function addEventListeners() {
-    document.addEventListener("submit", send_message)
-
+    chat.innerHTML += `
+        <div class="message assistant">
+            <div class="message-timestamp">${formattedTime}</div>
+            <div class="message assistant"><p class="message-content">${data.assistant_message.message}</p></div>
+        </div>
+    `;
 }
 
 function init() {
-    addEventListeners()
-
+    const form = document.querySelector('.input-container');
+    form.addEventListener('submit', send_message);
 }
 
-document.addEventListener("DOMContentLoaded", init)
+document.addEventListener('DOMContentLoaded', init);

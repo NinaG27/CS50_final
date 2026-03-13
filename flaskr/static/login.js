@@ -16,7 +16,6 @@ async function login(e) {
         showError('All fields are required', errorEl);
         return;
     }
-    console.log('here');
 
     const response = await fetch('/api/login', {
         method: 'POST',
