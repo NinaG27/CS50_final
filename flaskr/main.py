@@ -61,13 +61,13 @@ def assistant():
 @login_required
 def chat_history():
     user_id = session.get("user_id")
+
     # formatting messages by date
     # from https://docs.python.org/3/library/collections.html#defaultdict-examples
-    sorted_messages = defaultdict(list)  # Order not guaranteed need to fix later
+    sorted_messages = defaultdict(list)
 
-    for msg in get_messages(user_id):
-        # https://note.nkmk.me/en/python-datetime-isoformat-fromisoformat/
-        date = datetime.datetime.fromisoformat(msg["created_at"]).date()
+    for msg in fetch_messages(user_id=user_id):
+        date = msg.created_at.strftime("%Y-%m-%d")
         sorted_messages[date].append(msg)
 
     return render_template("history.html", messages=sorted_messages)
