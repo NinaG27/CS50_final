@@ -1,16 +1,22 @@
+import { showError, clearError } from './helpers.js';
+
 // Render all notes to the grid
 async function renderNotes() {
     const notesGrid = document.getElementById('notes-grid');
     const notesEmpty = document.getElementById('notes-empty');
 
+    const errorEl = document.querySelector('.error');
+    clearError(errorEl);
+
     // Fetch all notes for the user
     const response = await fetch('/api/get_notes');
 
-    if (!response.ok) {
-        return 'Something went wrong';
-    }
-
     const notes = await response.json();
+
+    if (!response.ok) {
+        showError(data.error || 'Something went wrong', errorEl);
+        return;
+    }
 
     if (notes.length === 0) {
         notesGrid.style.display = 'none';
@@ -18,18 +24,20 @@ async function renderNotes() {
         return;
     }
 
+    console.log(notes);
+
     notesGrid.style.display = 'grid';
     notesEmpty.style.display = 'none';
 
-    notesGrid.innerHTML = notes
+    notesGrid.innerHTML = notes.user_notes
         .map(
             note => `
-        <div class="note-card" data-id="${note['id']}">
+        <div class="note-card" data-id="${note.id}">
           <div class="note-header">
-            <div class="note-date">${note['created_at']}</div>
+            <div class="note-date">${note.created_at}</div>
             <button class="note-delete">Edit</button>
           </div>
-          <div class="note-content">${note['note']}</div>
+          <div class="note-content">${note.note}</div>
         </div>
     `,
         )
@@ -47,31 +55,29 @@ async function addNote() {
         return;
     }
 
-    try {
-        response = await fetch('/api/notes', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ note }),
-        });
+    const response = await fetch('/api/notes', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ note }),
+    });
 
-        if (!response.ok) {
-            console.log('somthing went wrong with adding of the note');
-        }
-        // Clear input
-        noteInput.value = '';
-        noteInput.focus();
-        // Handle UI update - rerender all notes
-        renderNotes();
-    } catch {
-        print('TODO');
+    const data = await response.json();
+
+    if (!response.ok) {
+        showError(data.error || 'Something went wrong', errorEl);
+        return;
     }
+    // Clear input
+    noteInput.value = '';
+    noteInput.focus();
+    // Handle UI update - rerender all notes
+    renderNotes();
 }
 
-// Delete a note
 async function redirect(el) {
-    id = el.dataset.id;
+    const id = el.dataset.id;
 
     window.location.replace(`/note/${id}`);
 }

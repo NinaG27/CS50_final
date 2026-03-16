@@ -37,15 +37,21 @@ def login_post():
     if not email or not password:
         return {"error": "All fields are required"}, 400
 
-    user = authenticate_user(email, password)
-    if not user:
-        return {"error": "Invalid credentials"}, 400
+    try:
+        user = authenticate_user(email, password)
+        if not user:
+            return {"error": "Invalid credentials"}, 400
 
-    user_id = user.id
-    # Remember which user has logged in
-    session["user_id"] = user_id
+        user_id = user.id
+        # Remember which user has logged in
+        session["user_id"] = user_id
 
-    return {"message": "Login successful"}, 201
+        return {"message": "Login successful"}, 201
+
+    except Exception as e:
+        db.session.rollback()
+        print("Critical error:", {e})
+        return {"error": "Internal Server Error"}, 500
 
 
 @auth.route("/logout")
@@ -57,22 +63,15 @@ def logout():
 
 
 def register_user(email, password_hash):
-    existing = User.query.filter_by(email=email).first()
-    if existing:
+    if User.query.filter_by(email=email).first():
         return None
 
     # create new user
     user = User(email=email, password_hash=password_hash)
 
-    try:
-        # add the new user to the database
-        db.session.add(user)
-        db.session.commit()
-    except Exception as e:
-        db.session.rollback()
-        print("Error registering user", e)
-        return None
-
+    # add the new user to the database
+    db.session.add(user)
+    db.session.commit()
     return user
 
 
@@ -106,9 +105,15 @@ def register_post():
     password_hash = generate_password_hash(password)
 
     # add user to db
-    user = register_user(email, password_hash)
-    # check if email exists in the db
-    if not user:
-        return {"error": "User already exists"}, 400
+    try:
+        user = register_user(email, password_hash)
+        # check if email exists in the db
+        if not user:
+            return {"error": "User already exists"}, 409
 
-    return {"message": "User created"}, 201
+        return {"message": "User created"}, 201
+
+    except Exception as e:
+        db.session.rollback()
+        print("Critical error:", {e})
+        return {"error": "Internal Server Error"}, 500

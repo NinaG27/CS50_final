@@ -1,8 +1,6 @@
 {% extends "layout.html" %}
 
-{% block title %}
-Notes
-{% endblock %}
+{% block title %}Notes{% endblock %}
 
 {% block content %}
 <div class="notes-container">
@@ -25,6 +23,8 @@ Notes
 
     <!-- Notes Grid -->
     <div class="notes-grid-section">
+      <p class="error" style="color: red;" hidden></p>
+
       <div class="notes-grid" id="notes-grid"></div>
 
       <div class="notes-empty" id="notes-empty">
@@ -38,5 +38,5 @@ Notes
 
 {% block scripts %}
 <!-- From:  https://flask.palletsprojects.com/en/stable/tutorial/static/ -->
-<script src="{{ url_for('static', filename='notes.js') }}"></script>
+<script type="module" src="{{ url_for('static', filename='notes.js') }}"></script>
 {% endblock %}
