@@ -1,6 +1,68 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Nisi consequuntur suscipit amet, magni officia error
-    impedit at voluptatibus sunt iusto iste reiciendis aliquid soluta atque quam culpa molestias a vitae?</p>
+<div class="landing-container">
+    <div class="landing-content">
+        <!-- Animated Hero Section -->
+        <div class="hero-section">
+            <div class="hero-box">
+                <div class="hero-diamond">◆</div>
+                <h1 class="hero-title">FRENCH_ASSISTANT.EXE</h1>
+                <p class="hero-subtitle">YOUR PERSONAL AI LEARNING COMPANION</p>
+                <p class="hero-tagline">MINIMAL DESIGN :: MAXIMUM EFFICIENCY</p>
+            </div>
+        </div>
+
+        <!-- Features Grid -->
+        <div class="features-grid">
+            <div class="feature-box">
+                <div class="feature-icon">◆</div>
+                <h3 class="feature-title">SMART CHAT</h3>
+                <p class="feature-desc">Talk to your AI assistant. Get instant responses. </p>
+            </div>
+            <div class="feature-box delay-1">
+                <div class="feature-icon">◆</div>
+                <h3 class="feature-title">AUTO HISTORY</h3>
+                <p class="feature-desc">Every conversation saved. Organized by date. Never lose a thought.</p>
+            </div>
+            <div class="feature-box delay-2">
+                <div class="feature-icon">◆</div>
+                <h3 class="feature-title">QUICK NOTES</h3>
+                <p class="feature-desc">Sticky notes that stick. Save ideas instantly.</p>
+            </div>
+        </div>
+
+        <!-- CTA Button -->
+        <div class="cta-section">
+            <a href="{{ url_for('auth.login') }}" class="cta-button">
+                <span class="cta-arrow">▶</span>
+                <span class="cta-text">START CHATTING NOW</span>
+                <span class="cta-arrow">◀</span>
+            </a>
+            <p class="cta-subtitle">LOGIN REQUIRED :: 100% FREE*</p>
+            <p class="cta-subtitle">*api key not provided</p>
+        </div>
+
+        <!-- Footer Info -->
+        <div class="landing-footer">
+            <div class="footer-line">
+                <span class="footer-label">STATUS:</span>
+                <span class="status-indicator">●</span>
+                <span class="status-text">ONLINE</span>
+            </div>
+            <div class="footer-line">
+                <span class="footer-label">SYSTEM_TIME:</span>
+                <span id="current-time">--:--:--</span>
+            </div>
+            <div class="footer-line">
+                <span class="footer-label">VERSION:</span>
+                <span>1.0.0</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='landing.js') }}"></script>
 {% endblock %}

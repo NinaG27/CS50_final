@@ -24,9 +24,7 @@
     <!-- Notes Grid -->
     <div class="notes-grid-section">
       <p class="error" style="color: red;" hidden></p>
-
       <div class="notes-grid" id="notes-grid"></div>
-
       <div class="notes-empty" id="notes-empty">
         <p>◆ NO NOTES FOUND ◆</p>
         <p class="notes-empty-hint">CREATE YOUR FIRST NOTE ABOVE</p>
@@ -34,6 +32,17 @@
     </div>
   </div>
 </div>
+
+<!-- Bootstrap toast message -->
+<div id="save-toast" class="toast align-items-center" role="alert" aria-live="assertive" aria-atomic="true">
+  <div class="d-flex">
+    <div class="toast-body">
+      Note saved
+    </div>
+    <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+  </div>
+</div>
+
 {% endblock %}
 
 {% block scripts %}

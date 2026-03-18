@@ -24,8 +24,6 @@ async function renderNotes() {
         return;
     }
 
-    console.log(notes);
-
     notesGrid.style.display = 'grid';
     notesEmpty.style.display = 'none';
 

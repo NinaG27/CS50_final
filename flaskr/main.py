@@ -17,6 +17,8 @@ main = Blueprint("main", __name__)
 
 @main.route("/")
 def index():
+    if session.get("user_id"):
+        return assistant()
     return render_template("index.html")
 
 

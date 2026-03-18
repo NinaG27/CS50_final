@@ -33,7 +33,7 @@ async function updateNote(el) {
             throw new Error(data.error || 'Failed to update note');
         }
 
-        // Simulate longer request TODO remove later
+        // Simulate longer request
         setTimeout(function () {
             const toast = document.getElementById('save-toast');
 
@@ -50,7 +50,7 @@ async function updateNote(el) {
                 btn.removeAttribute('disabled', 'disabled');
                 btn.style.color = 'white';
             });
-        }, 3000);
+        }, 2000);
     } catch (err) {
         alert('Could not update note.', err);
     }

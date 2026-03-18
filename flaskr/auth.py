@@ -59,7 +59,7 @@ def logout():
     """Log user out"""
     session.clear()
 
-    return {"message": "Logout successful"}, 201
+    return render_template("index.html")
 
 
 def register_user(email, password_hash):
