@@ -98,8 +98,4 @@ function addEventListeners() {
     }
 }
 
-function init() {
-    renderNotes();
-}
-
-document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('DOMContentLoaded', renderNotes);

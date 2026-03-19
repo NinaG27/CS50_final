@@ -17,43 +17,41 @@ async function updateNote(el) {
         return;
     }
 
-    try {
-        response = await fetch(`/api/notes/${id}`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            credentials: 'include',
-            body: JSON.stringify({ note }),
-        });
+    const response = await fetch(`/api/notes/${id}`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({ note }),
+    });
 
-        data = await response.json();
+    const data = await response.json();
 
-        if (!response.ok) {
-            throw new Error(data.error || 'Failed to update note');
+    if (!response.ok) {
+        alert(
+            `Could not update note. Error: ${data.error || 'Something went wrong'}`,
+        );
+        return;
+    }
+
+    // Simulate longer request
+    setTimeout(function () {
+        const toast = document.getElementById('save-toast');
+
+        if (toast) {
+            const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toast);
+            toastBootstrap.show();
         }
 
-        // Simulate longer request
-        setTimeout(function () {
-            const toast = document.getElementById('save-toast');
+        //Enable edits after request processed
+        noteInput.removeAttribute('disabled', 'disabled');
 
-            if (toast) {
-                const toastBootstrap =
-                    bootstrap.Toast.getOrCreateInstance(toast);
-                toastBootstrap.show();
-            }
-
-            //Enable edits after request processed
-            noteInput.removeAttribute('disabled', 'disabled');
-
-            btns.forEach(btn => {
-                btn.removeAttribute('disabled', 'disabled');
-                btn.style.color = 'white';
-            });
-        }, 2000);
-    } catch (err) {
-        alert('Could not update note.', err);
-    }
+        btns.forEach(btn => {
+            btn.removeAttribute('disabled', 'disabled');
+            btn.style.color = 'white';
+        });
+    }, 2000);
 }
 
 function redirect(url) {
@@ -67,30 +65,28 @@ async function deleteNote(el) {
 
     if (!confirm) return;
 
-    id = el.dataset.id;
+    const id = el.dataset.id;
 
-    try {
-        response = await fetch(`/api/notes/${id}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            credentials: 'include', // important for Flask session cookies? TODO
-        });
+    const response = await fetch(`/api/notes/${id}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
 
-        const data = await response.json();
+    const data = await response.json();
 
-        if (!response.ok) {
-            throw new Error(data.error || 'Failed to delete note');
-        }
-        // Handle UI update
-        redirect('/notes');
-    } catch (err) {
-        alert('Could not delete note.', err);
+    if (!response.ok) {
+        alert(
+            `Could not delete note. Error: ${data.error || 'Something went wrong'}`,
+        );
+        return;
     }
+    // Handle UI update
+    redirect('/notes');
 }
 
-function addEventListeners() {
+function init() {
     const btnContainer = document.querySelector('.note-buttons');
 
     btnContainer.addEventListener('click', function (ev) {
@@ -102,10 +98,6 @@ function addEventListeners() {
             if (classes.includes('--save')) updateNote(this);
         }
     });
-}
-
-function init() {
-    addEventListeners();
 }
 
 document.addEventListener('DOMContentLoaded', init);

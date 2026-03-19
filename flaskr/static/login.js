@@ -6,11 +6,11 @@ async function login(e) {
     const errorEl = document.querySelector('.error');
     clearError(errorEl);
 
-    let form = e.target;
-    let formData = new FormData(form);
+    const form = e.target;
+    const formData = new FormData(form);
 
-    let email = formData.get('email').toLowerCase();
-    let password = formData.get('password');
+    const email = formData.get('email').toLowerCase();
+    const password = formData.get('password');
 
     if (!email || !password) {
         showError('All fields are required', errorEl);
