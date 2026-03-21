@@ -66,13 +66,16 @@ To run this project localy you will need Groq api key. You can get one for free 
 **1. Create environment variables**
 Add .env file to the root project directory and add: 
 
-`GROQ_API_KEY=<add your key here> 
-SECRET_KEY=dev`
+`GROQ_API_KEY=<add your key here>`
+
+`SECRET_KEY=dev`
 
 **2. Install and run**
 
 `python3 -m venv .venv`
+
 `pip install -r requirements.txt`
+
 `flask --app flaskr run`
 
 This runs the app in the development mode.
