@@ -8,17 +8,29 @@ It was created as a final project for the Harvards CS50 course also as an opertu
 - User registration and login system.
 - Secure session handling for personilased experiance.
 
+<img width="1504" height="863" alt="Screenshot 2026-03-21 at 15 43 50" src="https://github.com/user-attachments/assets/3f185fd0-d581-44c3-aba5-94060f274ecc" />
+
+
 **AI-powered chat** 
 - Interactive chatbot designed to assist with French learning.  
-- The responses are generated via Groq API integration. 
+- The responses are generated via Groq API integration.
+
+  
+<img width="1069" height="1062" alt="Screenshot 2026-03-21 at 15 45 46" src="https://github.com/user-attachments/assets/6cfcdf74-d733-4c11-9707-1a281eabaee9" />
 
 **Note system** 
 
-- Users are add, edit and delete notes taken from lessions. 
+- Users are add, edit and delete notes taken from lessions.
+
+<img width="1082" height="1060" alt="Screenshot 2026-03-21 at 15 47 30" src="https://github.com/user-attachments/assets/ca2956b1-10d0-4161-aa06-70806ae87687" />
+
 
 **History page** 
 
-- Persistant chat history organised by date. 
+- Persistant chat history organised by date.
+
+<img width="1079" height="1057" alt="Screenshot 2026-03-21 at 15 47 59" src="https://github.com/user-attachments/assets/e95d6028-e719-43fd-8858-86c5f7ff5057" />
+
 
 ### Tech Stack
 
