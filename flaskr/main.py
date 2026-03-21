@@ -25,7 +25,7 @@ def index():
 ### Assistant page routes ###
 
 
-def fetch_messages(user_id, limit=20, today_only=False):
+def fetch_messages(user_id, limit=None, today_only=False):
     query = ChatLog.query.filter_by(user_id=user_id)
 
     # Filter only todays messages
