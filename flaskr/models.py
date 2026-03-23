@@ -39,4 +39,4 @@ class UserNotes(db.Model):
 
     note = db.Column(db.String, nullable=False)
 
-    created_at = db.Column(db.DateTime, default=datetime.now())
+    created_at = db.Column(db.DateTime, default=datetime.now)
